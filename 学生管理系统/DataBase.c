@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "DataBase.h"
 
 #define WRONGEXIT(x) {printf("%s,程序将会退出",x);system("pause");exit(1);}
 #define ADDITIONAL 10		//一次增加10个学生
@@ -23,16 +21,16 @@ int HeadCount;
 int StudentCount;
 int StudentCapacity;		//用于记录StudentList的容量(提高效率,避免多次分配)
 
-							/*
-							从文件读取数据
-							*/
-void ReadIni()
+/*
+从文件读取数据
+*/
+void ReadIni(char *File)
 {
 	FILE *f;
 	int n, unit;
 	int a, b;
 	char temp;
-	f = fopen("data.ini", "r");
+	f = fopen(File, "r");
 	if (!f)
 		WRONGEXIT("打开文件失败")
 		fscanf(f, "%d%d", &n, &unit);	//从文件中读取两个值
@@ -72,11 +70,11 @@ void ReadIni()
 /*
 写入数据到文件
 */
-void WriteIni(int *list, int n)
+void WriteIni(char* File,int *list, int n)
 {
 	FILE *f;
 	int a, b;
-	f = fopen("save.ini", "w+");
+	f = fopen(File, "w+");
 	if (!f)
 		WRONGEXIT("打开文件失败")
 		fprintf(f, "%d %d\n", n, HeadCount);
@@ -201,7 +199,7 @@ int StrCmp(const char *A, const char *B)
 /*
 找到表头对应的编号
 */
-int SearchHeadIndex(char *ListHeadName)
+int SearchHeadIndex(const char *ListHeadName)
 {
 	int a;
 	for (a = 0; a < HeadCount; a++) {
@@ -247,7 +245,6 @@ void Sort(int *list, int n, int sortBase, int Order)
 	return;
 }
 
-
 /*
 查找符合条件的学生
 返回值为找到的学生数
@@ -279,6 +276,9 @@ void GetList(int *list, int *n)
 	return;
 }
 
+/*
+根据list显示学生信息
+*/
 void display(int *list, int n)
 {
 	int a, b;
@@ -293,44 +293,4 @@ void display(int *list, int n)
 		printf("\n");
 	}
 	return;
-}
-
-int main()
-{
-	ReadIni();
-	int list[100] = { 0,1,2,3,4,5,6,7,8,9 };
-	int list2[100] = { 0 };
-	//按学号排
-	//display(list, StudentCount);
-	//NewUnit("语文成绩", 10, '0');
-	int c = newStudent(list, StudentCount);
-	display(list, StudentCount);
-
-	printf("\n按学号排\n");
-	Sort(list, StudentCount, SearchHeadIndex("学号"), 0);
-	display(list, StudentCount);
-
-	printf("\n按姓名排\n");
-	//按姓名排
-	Sort(list, StudentCount, SearchHeadIndex("姓名"), 1);
-	display(list, StudentCount);
-
-	printf("\n按手机号排\n");
-	//按姓名排
-	Sort(list, StudentCount, SearchHeadIndex("手机"), 0);
-	display(list, StudentCount);
-
-	int bb = Search(list, StudentCount, list2, SearchHeadIndex("家庭地址"), "广东省汕尾");
-	printf("\n查找汕尾的同学\n");
-	display(list2, bb);
-
-	printf("\n查找汕头的同学\n");
-	bb = Search(list, StudentCount, list2, SearchHeadIndex("家庭地址"), "广东省汕头");
-	Sort(list2, bb, SearchHeadIndex("学号"), 0);
-
-	display(list2, bb);
-
-	WriteIni(list, StudentCount);
-
-	system("pause");
 }
