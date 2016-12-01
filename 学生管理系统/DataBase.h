@@ -3,10 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern char ***StudentList;
+extern int StudentCount;
+
 void ReadIni(char *File);
 void WriteIni(char* File, int *list, int n);
 void NewUnit(char *title, int UnitLimits, char Default);
-int newStudent(int *list, int n);
+int NewStudent(int *list, int *n);
 int StrCmp(const char *A, const char *B);
 int SearchHeadIndex(const char *ListHeadName);
 void Sort(int *list, int n, int sortBase, int Order);

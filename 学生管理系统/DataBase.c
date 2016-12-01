@@ -1,10 +1,20 @@
 #include "DataBase.h"
 
+/*
+Create By ZCR
+2016-12-01
+*/
+
+/*
+在调用函数时,会要求传入一个*list,
+这是一个保存学生在表中的实际存放顺序的下标的数组
+它保存的数据是一个个下标,这些数据的顺序不会改变表本身,但是它会关系到显示和保存数据
+*/
 #define WRONGEXIT(x) {printf("%s,程序将会退出",x);system("pause");exit(1);}
 #define ADDITIONAL 10		//一次增加10个学生
 
 /*
-data.ini中
+在存档文件中,
 第一行第一个数字代表学生的人数n,第二个数字代表每个人的属性的个数unit
 第二行有unit组数据,每组数据由2个数据组成,分别是一个字符串(表头)和一个数字(代表这个单元的限制长度)
 接下来有n组数据,一直到文件结尾,每组数据分别有unit个数据,他们的值就是表头定义的值
@@ -15,6 +25,7 @@ data.ini中
 指向字符串数组的指针
 */
 char ***StudentList;
+
 char **ListHead;			//表头名称的字符串数组
 int *ListLHeadlimits;		//单元字符限制(数组)
 int HeadCount;
@@ -23,6 +34,7 @@ int StudentCapacity;		//用于记录StudentList的容量(提高效率,避免多次分配)
 
 /*
 从文件读取数据
+File 要读取的文件路径
 */
 void ReadIni(char *File)
 {
@@ -69,6 +81,9 @@ void ReadIni(char *File)
 
 /*
 写入数据到文件
+File要进行写入的文件路径,
+list 当前正在处理的学生的下标集合
+n list中元素的个数
 */
 void WriteIni(char* File,int *list, int n)
 {
@@ -137,8 +152,10 @@ void NewUnit(char *title, int UnitLimits, char Default)
 
 /*
 加入一个新的学生
+list 当前正在处理的学生的下标集合
+n list中元素的个数
 */
-int newStudent(int *list, int n)
+int NewStudent(int *list, int *n)
 {
 	char ***temp;
 	int a;
@@ -156,9 +173,10 @@ int newStudent(int *list, int n)
 		StudentList[StudentCount][a][0] = '0';		//初始化单元格数据
 		StudentList[StudentCount][a][1] = 0;
 	}
-	list[n++] = StudentCount;
+	list[*n] = StudentCount;
+	*n+=1;
 	StudentCount++;
-	return n;
+	return *n;
 }
 
 /*
@@ -197,7 +215,7 @@ int StrCmp(const char *A, const char *B)
 }
 
 /*
-找到表头对应的编号
+通过表头的标题找到表头对应的编号
 */
 int SearchHeadIndex(const char *ListHeadName)
 {
@@ -211,8 +229,10 @@ int SearchHeadIndex(const char *ListHeadName)
 
 /*
 传入一个下标数组,存储学生按指定的基准进行排序后新的顺序,list中仅储存这个学生在数据库中的实际顺序
-Order 0 升序排序
-Order 1 降序排序
+list 当前正在处理的学生的下标集合
+n list中元素的个数
+Order==0 升序排序
+Order==1 降序排序
 */
 void Sort(int *list, int n, int sortBase, int Order)
 {
@@ -248,6 +268,10 @@ void Sort(int *list, int n, int sortBase, int Order)
 /*
 查找符合条件的学生
 返回值为找到的学生数
+Sourcelist 当前正在处理的学生的下标集合
+n list中元素的个数
+Resultlist 处理之后返回的学生的下标集合(允许与Sourcelist一样)
+destin 寻找的目标字符串
 */
 int Search(int *Sourcelist, int n, int *Resultlist, int SearchUnit, const char *destin)
 {
