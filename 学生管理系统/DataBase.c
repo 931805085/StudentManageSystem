@@ -173,6 +173,7 @@ int NewStudent(int *list, int *n)
 {
 	char ***temp;
 	int a;
+	//确定是否有空间保存数据
 	if (StudentCapacity <= StudentCount) {
 		StudentCapacity = StudentCount + ADDITIONAL;
 		temp = (char***)malloc(sizeof(char**)*StudentCapacity);
@@ -207,6 +208,14 @@ int NewStudent(int *list, int *n)
 }
 
 /*
+删除指定列
+*/
+int DeleteUnit(int Unit)
+{
+
+}
+
+/*
 从名单中剔除某个学生(此函数不会对表进行改动)
 list是要进行修改的表
 n是list表的长度
@@ -219,6 +228,7 @@ void DeleteStudentInList(int *list, int *n, int StudentNumber, int mode)
 	switch (mode)
 	{
 	case 0:
+		//删除指定学生之后用最后一个学生信息填充
 		for (a = 0; a < *n; a++)
 		{
 			if (list[a] == StudentNumber)
@@ -230,6 +240,7 @@ void DeleteStudentInList(int *list, int *n, int StudentNumber, int mode)
 		}
 		break;
 	case 1:
+		//删除指定学生之后,空位之后的学生上移,以此填补空位
 		for (a = 0; a < *n; a++)
 		{
 			list[b] = list[a];
@@ -268,8 +279,9 @@ int StrCmp(const char *A, const char *B)
 	int isNumA = 1, isNumB = 1;
 	int lenA = 0, lenB = 0;
 	char *A2 = (char*)A, *B2 = (char*)B;
+	//计算长度并判断是否是纯数字
 	while (*A2) {
-		if (isNumA && (*A2<'0' || *B2>'9'))
+		if (isNumA && (*A2<'0' || *A2>'9'))
 			isNumA = 0;
 		lenA++;
 		A2++;
@@ -283,9 +295,11 @@ int StrCmp(const char *A, const char *B)
 	if (isNumA*isNumB == 1) {
 		//两个数字进行比较
 		if (lenA != lenB) {
+			//如果两个数字的长度不同,则长的数字大
 			return lenA - lenB;
 		}
 		else {
+			//如果数字长度相同,怎从高位到低位依次比较
 			return strcmp(A, B);
 		}
 	}
