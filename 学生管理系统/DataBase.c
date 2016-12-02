@@ -404,10 +404,10 @@ void display(int *list, int n)
 该函数取得指定学生的指定信息的指针
 可以用于显示它的值或修改它的值
 list 名单
-list_ID 学生在名单中的位置(从1开始计)
+list_ID 学生在名单中的位置(从0开始计)
 GetUnit 表头的
 */
 char* GetString(int *list,int list_ID,int GetUnit)
 {
-	return StudentList[list[list_ID - 1]][GetUnit];
+	return StudentList[list[list_ID]][GetUnit];
 }

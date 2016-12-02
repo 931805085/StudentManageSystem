@@ -20,6 +20,7 @@ int main()
 	int list3[1500];
 	int n;
 	int temp,temp2;
+	char *temp3;
 
 	ReadIni("data.ini");		//读取data.ini
 	GetList(list, &n);			//取得一个名单
@@ -73,9 +74,17 @@ int main()
 	printf("从名单中删除第一个同学的信息\n");
 	DeleteStudentInList(list, &n, list[0], 1);
 	display(list, n);
+
+	printf("\n将第n个人的姓名改为黄智豪\n");
+	temp3 = GetString(list, n - 1, SearchHeadIndex("姓名"));
+	strcpy(temp3, "黄智豪");
+	display(list, n);
 	
 	printf("\n取得第n个人的姓名\n");
-	printf("%s\n", GetString(list, n, SearchHeadIndex("姓名")));
+	printf("%s\n", GetString(list, n-1, SearchHeadIndex("姓名")));
+
+	printf("将数据保存到new.ini\n");
+	WriteIni("new.ini", list, n);
 
 	//释放内存之后,不能再对表进行操作
 	DestroyStudentList();
