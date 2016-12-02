@@ -10,6 +10,7 @@ void ReadIni(char *File);
 void WriteIni(char* File, int *list, int n);
 void NewUnit(char *title, int UnitLimits, char Default);
 int NewStudent(int *list, int *n);
+void DeleteUnit(int Unit);
 void DeleteStudentInList(int *list, int *n, int StudentNumber, int mode);
 int StrCmp(const char *A, const char *B);
 int SearchHeadIndex(const char *ListHeadName);

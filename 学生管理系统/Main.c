@@ -7,6 +7,7 @@
 1.排序
 2.查找学生
 3.新增数据列
+4.删除数据列
 4.新增学生
 5.修改学生信息
 6.删除指定学生
@@ -71,7 +72,8 @@ int main()
 	NewStudent(list, &n);
 	display(list, n);
 
-	*/
+	
+
 	printf("从名单中删除第一个同学的信息\n");
 	DeleteStudentInList(list, &n, list[0], 1);
 	display(list, n);
@@ -86,6 +88,11 @@ int main()
 
 	printf("将数据保存到new.ini\n");
 	WriteIni("new.ini", list, n);
+
+	*/
+	printf("\n删除成绩1列\n");
+	DeleteUnit(SearchHeadIndex("成绩1"));
+	display(list, n);
 
 	//释放内存之后,不能再对表进行操作
 	DestroyStudentList();

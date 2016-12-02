@@ -209,10 +209,32 @@ int NewStudent(int *list, int *n)
 
 /*
 删除指定列
+Unit要删除的列的下标
 */
-int DeleteUnit(int Unit)
+void DeleteUnit(int Unit)
 {
-
+	int a,b,c;
+	for (a = 0,b=0; a < HeadCount; a++)
+	{
+		ListHead[b] = ListHead[a];
+		ListLHeadlimits[b] = ListLHeadlimits[a];
+		if (a != Unit)
+			b++;
+		else
+			free(ListHead[a]);
+	}
+	for (a = 0; a < StudentCount; a++)
+	{
+		for (b = 0,c=0; b < HeadCount; b++)
+		{
+			StudentList[a][c] = StudentList[a][b];
+			if (b != Unit)
+				c++;
+			else
+				free(StudentList[a][b]);
+		}
+	}
+	HeadCount--;
 }
 
 /*
