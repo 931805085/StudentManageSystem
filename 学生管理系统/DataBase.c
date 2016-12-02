@@ -64,18 +64,18 @@ void ReadIni(char *File)
 	//开始初始化表并读取数据
 	StudentList = (char***)malloc(sizeof(char**)*n);
 	if (!StudentList)
-		WRONGEXIT("内存不足")
-		for (a = 0; a < n; a++) {
-			StudentList[a] = (char**)malloc(sizeof(char*)*unit);
-			if (!StudentList[a])
-				WRONGEXIT("内存不足")
-				for (b = 0; b < unit; b++) {
-					StudentList[a][b] = (char*)malloc(sizeof(char)*(ListLHeadlimits[b] + 1));
-					if (!StudentList[a][b])
-						WRONGEXIT("内存不足")
-						fscanf(f, "%s", StudentList[a][b]);
-				}
+		WRONGEXIT("内存不足");
+	for (a = 0; a < n; a++) {
+		StudentList[a] = (char**)malloc(sizeof(char*)*unit);
+		if (!StudentList[a])
+			WRONGEXIT("内存不足");
+		for (b = 0; b < unit; b++) {
+			StudentList[a][b] = (char*)malloc(sizeof(char)*(ListLHeadlimits[b] + 1));
+			if (!StudentList[a][b])
+				WRONGEXIT("内存不足");
+			fscanf(f, "%s", StudentList[a][b]);
 		}
+	}
 	fclose(f);
 }
 
@@ -85,7 +85,7 @@ File要进行写入的文件路径,
 list 当前正在处理的学生的下标集合
 n list中元素的个数
 */
-void WriteIni(char* File,int *list, int n)
+void WriteIni(char* File, int *list, int n)
 {
 	FILE *f;
 	int a, b;
@@ -114,21 +114,31 @@ Default 表中的初始值,必须为非空白字符
 */
 void NewUnit(char *title, int UnitLimits, char Default)
 {
-	int newUnitCount = HeadCount + 1;
 	char **temp;
 	int *temp2;
 	int a, b;
+	int newUnitCount;
+	newUnitCount = HeadCount + 1;
+
+	if (UnitLimits < 1)		//确保UnitLimits能够存储下"0"
+		UnitLimits = 1;
 
 	//创建表头
 	temp = (char**)malloc(sizeof(char*)*newUnitCount);
+	if (!temp)
+		WRONGEXIT("内存不足");
 	for (a = 0; a < HeadCount; a++)
 		temp[a] = ListHead[a];
 	temp[a] = (char*)malloc(sizeof(char) * 32);
+	if (!temp[a])
+		WRONGEXIT("内存不足");
 	strcpy(temp[a], title);
 	free(ListHead);
 	ListHead = temp;
 
 	temp2 = (int*)malloc(sizeof(int)*newUnitCount);
+	if (!temp2)
+		WRONGEXIT("内存不足");
 	for (a = 0; a < HeadCount; a++)
 		temp2[a] = ListLHeadlimits[a];
 	temp2[a] = UnitLimits;
@@ -138,9 +148,13 @@ void NewUnit(char *title, int UnitLimits, char Default)
 	//为每个学生的相应属性分配内存
 	for (a = 0; a < StudentCount; a++) {
 		temp = (char**)malloc(sizeof(char*)*newUnitCount);
+		if (!temp)
+			WRONGEXIT("内存不足");
 		for (b = 0; b < HeadCount; b++)
 			temp[b] = StudentList[a][b];
-		temp[b] = (char*)calloc(sizeof(char)*(UnitLimits + 1), sizeof(char)*(UnitLimits + 1));
+		temp[b] = (char*)malloc(sizeof(char)*(UnitLimits + 1));
+		if (!temp[b])
+			WRONGEXIT("内存不足");
 		temp[b][0] = Default;
 		temp[b][1] = 0;
 		free(StudentList[a]);
@@ -160,24 +174,91 @@ int NewStudent(int *list, int *n)
 	char ***temp;
 	int a;
 	if (StudentCapacity <= StudentCount) {
-		StudentCapacity += ADDITIONAL;
+		StudentCapacity = StudentCount + ADDITIONAL;
 		temp = (char***)malloc(sizeof(char**)*StudentCapacity);
+		if (!temp)
+			WRONGEXIT("内存不足");
 		for (a = 0; a < StudentCount; a++)
 			temp[a] = StudentList[a];
 		free(StudentList);
 		StudentList = temp;
 	}
-	StudentList[StudentCount] = (char**)malloc(sizeof(char*)*HeadCount);
-	for (a = 0; a < HeadCount; a++) {
-		StudentList[StudentCount][a] = (char*)malloc(sizeof(char)*(ListLHeadlimits[a] + 1));
-		StudentList[StudentCount][a][0] = '0';		//初始化单元格数据
-		StudentList[StudentCount][a][1] = 0;
+	//对最后一个元素进行写入,到这里可以确定StudentList[StudentCount]一定可以保存数据
+	if (HeadCount > 0) {
+		StudentList[StudentCount] = (char**)malloc(sizeof(char*)*HeadCount);
+		if (!StudentList[StudentCount])
+			WRONGEXIT("内存不足");
+		for (a = 0; a < HeadCount; a++) {
+			if (ListLHeadlimits[a] < 1) {
+				ListLHeadlimits[a] = 1;
+			}
+			StudentList[StudentCount][a] = (char*)malloc(sizeof(char)*(ListLHeadlimits[a] + 1));
+			if (!StudentList[StudentCount][a])
+				WRONGEXIT("内存不足")
+				StudentList[StudentCount][a][0] = '0';		//初始化单元格数据
+			StudentList[StudentCount][a][1] = 0;
+		}
 	}
-	list[*n] = StudentCount;
-	*n+=1;
+
+	list[*n] = StudentCount;//把新的学生的下标传递给名单
+	*n += 1;
 	StudentCount++;
 	return *n;
 }
+
+/*
+从名单中剔除某个学生(此函数不会对表进行改动)
+list是要进行修改的表
+n是list表的长度
+StudentNumber是学生在表中的实际编号
+mode是删除模式 0表示删除后取最后一个元素来填补空缺(效率高) 1表示将按原来的顺序
+*/
+void DeleteStudentInList(int *list, int *n, int StudentNumber, int mode)
+{
+	int a, b = 0;
+	switch (mode)
+	{
+	case 0:
+		for (a = 0; a < *n; a++)
+		{
+			if (list[a] == StudentNumber)
+			{
+				list[a] = list[*n - 1];
+				*n -= 1;
+				return;
+			}
+		}
+		break;
+	case 1:
+		for (a = 0; a < *n; a++)
+		{
+			list[b] = list[a];
+			if (list[a] != StudentNumber)
+				b++;
+		}
+		*n -= 1;
+		return;
+	}
+}
+
+/*
+当学生表不再需要时,调用它可以释放内存,但是释放内存之后不能再对表进行操作,除非重新读取表信息
+*/
+void DestroyStudentList()
+{
+	int a, b, c;
+	for (a = 0; a < StudentCount; a++)
+	{
+		for (b = 0; b < HeadCount; b++)
+		{
+			free(StudentList[a][b]);
+		}
+		free(StudentList[a]);
+	}
+	free(StudentList);
+	StudentList = NULL;
+}
+
 
 /*
 两个字符串进行比较,兼容数字比较
@@ -317,4 +398,16 @@ void display(int *list, int n)
 		printf("\n");
 	}
 	return;
+}
+
+/*
+该函数取得指定学生的指定信息的指针
+可以用于显示它的值或修改它的值
+list 名单
+list_ID 学生在名单中的位置(从1开始计)
+GetUnit 表头的
+*/
+char* GetString(int *list,int list_ID,int GetUnit)
+{
+	return StudentList[list[list_ID - 1]][GetUnit];
 }

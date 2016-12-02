@@ -20,12 +20,18 @@ int main()
 	int list3[1500];
 	int n;
 	int temp,temp2;
+
 	ReadIni("data.ini");		//读取data.ini
 	GetList(list, &n);			//取得一个名单
+
+	
+	//测试代码,自行去掉注释进行测试
 
 	printf("按照姓名升序排序\n");
 	Sort(list, n, SearchHeadIndex("姓名"), 0);
 	display(list, n);
+	
+	/*
 
 	printf("\n按照姓名降序排序\n");
 	Sort(list, n, SearchHeadIndex("姓名"), 1);
@@ -63,5 +69,15 @@ int main()
 	NewStudent(list, &n);
 	display(list, n);
 
+	*/
+	printf("从名单中删除第一个同学的信息\n");
+	DeleteStudentInList(list, &n, list[0], 1);
+	display(list, n);
+	
+	printf("\n取得第n个人的姓名\n");
+	printf("%s\n", GetString(list, n, SearchHeadIndex("姓名")));
+
+	//释放内存之后,不能再对表进行操作
+	DestroyStudentList();
 	system("pause");
 }
