@@ -1,100 +1,227 @@
 #include "DataBase.h"
+#include "DataBase.c"
 
 
-/*
-ĞèÒªÊµÏÖµÄ¹¦ÄÜ
-0.ÏÔÊ¾ËùÓĞÑ§ÉúĞÅÏ¢
-1.ÅÅĞò
-2.²éÕÒÑ§Éú
-3.ĞÂÔöÊı¾İÁĞ
-4.É¾³ıÊı¾İÁĞ
-4.ĞÂÔöÑ§Éú
-5.ĞŞ¸ÄÑ§ÉúĞÅÏ¢
-6.É¾³ıÖ¸¶¨Ñ§Éú
-7.¶ÁÈ¡Ñ§ÉúĞÅÏ¢
-8.±£´æÑ§ÉúĞÅÏ¢
-*/
 
-int main()
-{
-	int list[1500];				//Ãûµ¥,ÀïÃæ±£´æµÄÊÇÑ§ÉúµÄÏÂ±ê
-	int list2[1500];
-	int list3[1500];
-	int n;
-	int temp,temp2;
-	char *temp3;
 
-	ReadIni("data.ini");		//¶ÁÈ¡data.ini
-	GetList(list, &n);			//È¡µÃÒ»¸öÃûµ¥
+int list[1500];				//åå•,é‡Œé¢ä¿å­˜çš„æ˜¯å­¦ç”Ÿçš„ä¸‹æ ‡
+int list2[1500];
+int list3[1500];
+int n;
+int temp,temp2;
+char *temp3;
 
-	
-	//²âÊÔ´úÂë,×ÔĞĞÈ¥µô×¢ÊÍ½øĞĞ²âÊÔ
+void start();
+void SortList();
+void SearchStudentByUnit();
+void AddNewInformationUnit();
+void DeleteInformationUnit();
+void AddNewStudent();
+void ChangeStudentInformation();
+void DeleteAStudentFromList();
+void ReadFromFile();
+void WriteToFile();
 
-	printf("°´ÕÕĞÕÃûÉıĞòÅÅĞò\n");
-	Sort(list, n, SearchHeadIndex("ĞÕÃû"), 0);
-	display(list, n);
-	
-	/*
 
-	printf("\n°´ÕÕĞÕÃû½µĞòÅÅĞò\n");
-	Sort(list, n, SearchHeadIndex("ĞÕÃû"), 1);
-	display(list, n);
 
-	printf("\n°´ÕÕÑ§ºÅÉıĞòÅÅĞò\n");
-	Sort(list, n, SearchHeadIndex("Ñ§ºÅ"), 0);
-	display(list, n);
 
-	printf("\n°´ÕÕÑ§ºÅ½µĞòÅÅĞò\n");
-	Sort(list, n, SearchHeadIndex("Ñ§ºÅ"), 1);
-	display(list, n);
 
-	printf("\n°´ÕÕ³É¼¨1ÉıĞòÅÅĞò\n");
-	Sort(list, n, SearchHeadIndex("³É¼¨1"), 0);
-	display(list, n);
 
-	printf("\n°´ÕÕ³É¼¨1½µĞòÅÅĞò\n");
-	Sort(list, n, SearchHeadIndex("³É¼¨1"), 1);
-	display(list, n);
+//     printf("\næ–°å¢ä¸€ä¸ªé¡¹æˆç»©3\n");
+//     NewUnit("æˆç»©3", 3, '0');
+//     display(list, n);
+//     printf("\næ–°å¢ä¸€ä¸ªå­¦ç”Ÿ\n");
+//     NewStudent(list, &n);
+//     display(list, n);
+//
+//     printf("ä»åå•ä¸­åˆ é™¤ç¬¬ä¸€ä¸ªåŒå­¦çš„ä¿¡æ¯\n");
+//     DeleteStudentInList(list, &n, list[0], 1);
+//     display(list, n);
+//     printf("\nå°†ç¬¬nä¸ªäººçš„å§“åæ”¹ä¸ºé»„æ™ºè±ª\n");
+//     temp3 = GetString(list, n - 1, SearchHeadIndex("å§“å"));
+//     strcpy(temp3, "é»„æ™ºè±ª");
+//     display(list, n);
+//
+//     printf("\nå–å¾—ç¬¬nä¸ªäººçš„å§“å\n");
+//     printf("%s\n", GetString(list, n-1, SearchHeadIndex("å§“å")));
+//     printf("å°†æ•°æ®ä¿å­˜åˆ°new.ini\n");
+//     WriteIni("new.ini", list, n);
+//     */
+//    printf("\nåˆ é™¤æˆç»©1åˆ—\n");
+//    DeleteUnit(SearchHeadIndex("æˆç»©1"));
+//    display(list, n);
+//
+//    //é‡Šæ”¾å†…å­˜ä¹‹å,ä¸èƒ½å†å¯¹è¡¨è¿›è¡Œæ“ä½œ
+//    DestroyStudentList();
+//    system("pause");
 
-	printf("\nÕÒµ½³É¼¨1Îª65·ÖµÄ\n");
-	temp=Search(list, n, list2, SearchHeadIndex("³É¼¨1"), "65");
-	display(list2, temp);
-
-	printf("\nÕÒµ½³É¼¨1Îª65·Ö,²¢ÇÒ³É¼¨2Îª56·ÖµÄ\n");
-	temp2 = Search(list2, temp, list3, SearchHeadIndex("³É¼¨2"), "56");
-	display(list3, temp2);
-
-	printf("\nĞÂÔöÒ»¸öÏî³É¼¨3\n");
-	NewUnit("³É¼¨3", 3, '0');
-	display(list, n);
-
-	printf("\nĞÂÔöÒ»¸öÑ§Éú\n");
-	NewStudent(list, &n);
-	display(list, n);
-
-	
-
-	printf("´ÓÃûµ¥ÖĞÉ¾³ıµÚÒ»¸öÍ¬Ñ§µÄĞÅÏ¢\n");
-	DeleteStudentInList(list, &n, list[0], 1);
-	display(list, n);
-
-	printf("\n½«µÚn¸öÈËµÄĞÕÃû¸ÄÎª»ÆÖÇºÀ\n");
-	temp3 = GetString(list, n - 1, SearchHeadIndex("ĞÕÃû"));
-	strcpy(temp3, "»ÆÖÇºÀ");
-	display(list, n);
-	
-	printf("\nÈ¡µÃµÚn¸öÈËµÄĞÕÃû\n");
-	printf("%s\n", GetString(list, n-1, SearchHeadIndex("ĞÕÃû")));
-
-	printf("½«Êı¾İ±£´æµ½new.ini\n");
-	WriteIni("new.ini", list, n);
-
-	*/
-	printf("\nÉ¾³ı³É¼¨1ÁĞ\n");
-	DeleteUnit(SearchHeadIndex("³É¼¨1"));
-	display(list, n);
-
-	//ÊÍ·ÅÄÚ´æÖ®ºó,²»ÄÜÔÙ¶Ô±í½øĞĞ²Ù×÷
-	DestroyStudentList();
-	system("pause");
+int main() {
+    
+    
+    ReadIni("data.ini");		//è¯»å–data.ini
+    GetList(list, &n);			//å–å¾—ä¸€ä¸ªåå•
+    
+    printf(
+           "0.æ˜¾ç¤ºæ‰€æœ‰å­¦ç”Ÿä¿¡æ¯\n"
+           "1.æ’åº\n"
+           "2.æŸ¥æ‰¾å­¦ç”Ÿ\n"
+           "3.æ–°å¢æ•°æ®åˆ—\n"
+           "4.åˆ é™¤æ•°æ®åˆ—\n"
+           "5.æ–°å¢å­¦ç”Ÿ\n"
+           "6.ä¿®æ”¹å­¦ç”Ÿä¿¡æ¯\n"
+           "7.åˆ é™¤æŒ‡å®šå­¦ç”Ÿ\n"
+           "8.è¯»å–å­¦ç”Ÿä¿¡æ¯\n"
+           "9.ä¿å­˜å­¦ç”Ÿä¿¡æ¯\n"
+           );
+    int mode = -1;
+    scanf("%d",&mode);
+    switch (mode) {
+        case 0://"0.æ˜¾ç¤ºæ‰€æœ‰å­¦ç”Ÿä¿¡æ¯"
+            display(list, n);//å®Œæˆ
+            break;
+            
+        case 1://"1.æ’åº"
+            SortList();//å®Œæˆï¼Œç¼ºå¾ªç¯åŠé€€å‡º
+            break;
+            
+        case 2://"2.æŸ¥æ‰¾å­¦ç”Ÿ"
+            SearchStudentByUnit();//å®Œæˆï¼Œç¼ºå¾ªç¯ï¼Œç¬¬äºŒæ¡ä»¶ï¼Œç¬¬ä¸‰æ¡ä»¶ã€‚æ— é™æ¡ä»¶ï¼Œé€€å‡ºã€‚
+            break;
+            
+        case 3://"3.æ–°å¢æ•°æ®åˆ—\n"
+            AddNewInformationUnit();
+            break;
+            
+        case 4://"4.åˆ é™¤æ•°æ®åˆ—\n"
+            DeleteInformationUnit();
+            break;
+            
+        case 5://"5.æ–°å¢å­¦ç”Ÿ\n"
+            AddNewStudent();
+            break;
+            
+        case 6://"6.ä¿®æ”¹å­¦ç”Ÿä¿¡æ¯\n"
+            ChangeStudentInformation();
+            break;
+            
+        case 7://"7.åˆ é™¤æŒ‡å®šå­¦ç”Ÿ\n"
+            DeleteAStudentFromList();
+            break;
+            
+        case 8://"8.è¯»å–å­¦ç”Ÿä¿¡æ¯\n"
+            ReadFromFile();
+            break;
+            
+        case 9://"9.ä¿å­˜å­¦ç”Ÿä¿¡æ¯\n"
+            WriteToFile();
+            break;
+            
+    }
+    return 0;
 }
+
+void SortList(){
+    
+    int order;
+    char sortbase[16];
+    
+    printf("è¯·è¾“å…¥æ‰€éœ€æ’åºçš„å•å…ƒ(å¦‚:åå­—,æˆç»©1)\n");
+    scanf("%s", sortbase);
+    printf("è¯·é€‰æ‹©æ’åºæ–¹å¼\n0.å‡åº\n1.é™åº\n");
+    scanf("%d", &order);
+    switch (order) {
+        case 0:
+            Sort(list, n, SearchHeadIndex(sortbase), 0);
+            display(list, n);
+            break;
+        case 1:
+            Sort(list, n, SearchHeadIndex(sortbase), 1);
+            display(list, n);
+            break;
+    }
+    return;
+}
+
+void SearchStudentByUnit() {
+    
+    char searchunit[16];
+    char destin;
+    
+    printf("è¯·è¾“å…¥æ‰€éœ€å¯»æ‰¾çš„å•å…ƒ(å¦‚:å§“å,æˆç»©1)\n");
+    scanf("%s",searchunit);
+    printf("è¾“å…¥æ‰€éœ€å¯»æ‰¾çš„ä¿¡æ¯(å¦‚:å¼ ä¸‰,64)\n");
+    scanf("%s",&destin);
+    temp=Search(list, n, list2, SearchHeadIndex(searchunit), &destin);
+    display(list2, n);
+    
+    
+}
+void AddNewInformationUnit() {
+    printf("è¯·è¾“å…¥:æ·»åŠ çš„å•å…ƒåå­— å•å…ƒå­—èŠ‚èŒƒå›´ åˆå§‹å€¼\n");
+    NewUnit("æˆç»©3", 3, '0');
+    NewUnit(<#char *title#>, <#int UnitLimits#>, <#char Default#>)
+    
+}
+void DeleteInformationUnit() {
+    
+}
+void AddNewStudent() {
+    
+}
+void ChangeStudentInformation() {
+    
+}
+void DeleteAStudentFromList() {
+    
+}
+void ReadFromFile() {
+    
+}
+void WriteToFile() {
+    
+}
+
+
+
+//    //æµ‹è¯•ä»£ç ,è‡ªè¡Œå»æ‰æ³¨é‡Šè¿›è¡Œæµ‹è¯•
+//
+//    printf("æŒ‰ç…§å§“åå‡åºæ’åº\n");
+//    Sort(list, n, SearchHeadIndex("å§“å"), 0);
+//    display(list, n);
+//
+//    /*
+//     printf("\næŒ‰ç…§å§“åé™åºæ’åº\n");
+//     Sort(list, n, SearchHeadIndex("å§“å"), 1);
+//     display(list, n);
+//     printf("\næŒ‰ç…§å­¦å·å‡åºæ’åº\n");
+//     Sort(list, n, SearchHeadIndex("å­¦å·"), 0);
+//     display(list, n);
+//     printf("\næŒ‰ç…§å­¦å·é™åºæ’åº\n");
+//     Sort(list, n, SearchHeadIndex("å­¦å·"), 1);
+//     display(list, n);
+//     printf("\næŒ‰ç…§æˆç»©1å‡åºæ’åº\n");
+//     Sort(list, n, SearchHeadIndex("æˆç»©1"), 0);
+//     display(list, n);
+//     printf("\næŒ‰ç…§æˆç»©1é™åºæ’åº\n");
+//     Sort(list, n, SearchHeadIndex("æˆç»©1"), 1);
+//     display(list, n);
+
+//     printf("\næ‰¾åˆ°æˆç»©1ä¸º65åˆ†çš„\n");
+//     temp=Search(list, n, list2, SearchHeadIndex("æˆç»©1"), "65");
+//     display(list2, temp);
+//     printf("\næ‰¾åˆ°æˆç»©1ä¸º65åˆ†,å¹¶ä¸”æˆç»©2ä¸º56åˆ†çš„\n");
+//     temp2 = Search(list2, temp, list3, SearchHeadIndex("æˆç»©2"), "56");
+//     display(list3, temp2);
+//
+
+
+//
+//
+//  main.h
+//  C
+//
+//  Created by wongziihou on 2/12/16.
+//  Copyright Â© 2016 wongziihou. All rights reserved.
+//
+
+
