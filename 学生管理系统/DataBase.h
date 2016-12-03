@@ -20,3 +20,4 @@ void GetList(int *list, int *n);
 void display(int *list, int n);
 void DestroyStudentList();
 char* GetString(int *list, int list_ID, int GetUnit);
+char* GetUnitTittle(int Unit);

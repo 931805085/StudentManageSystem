@@ -26,9 +26,9 @@ Create By ZCR
 */
 char ***StudentList;
 
-char **ListHead;			//表头名称的字符串数组
-int *ListLHeadlimits;		//单元字符限制(数组)
-int HeadCount;
+char **UnitHead;			//表头名称的字符串数组
+int *UnitHeadlimits;		//单元字符限制(数组)
+int UnitCount;
 int StudentCount;
 int StudentCapacity;		//用于记录StudentList的容量(提高效率,避免多次分配)
 
@@ -46,20 +46,20 @@ void ReadIni(char *File)
 	if (!f)
 		WRONGEXIT("打开文件失败")
 		fscanf(f, "%d%d", &n, &unit);	//从文件中读取两个值
-	HeadCount = unit;
+	UnitCount = unit;
 	StudentCount = n;
 	StudentCapacity = n;
 	//初始化表头
-	ListHead = (char**)malloc(sizeof(char*) * unit);
-	ListLHeadlimits = (int*)malloc(sizeof(int)*unit);
-	if (!(ListHead&&ListLHeadlimits))
+	UnitHead = (char**)malloc(sizeof(char*) * unit);
+	UnitHeadlimits = (int*)malloc(sizeof(int)*unit);
+	if (!(UnitHead&&UnitHeadlimits))
 		WRONGEXIT("内存不足")
 
 		for (a = 0; a < unit; a++) {
-			*(ListHead + a) = (char*)malloc(sizeof(char) * 32);
-			if (!(*(ListHead + a)))
+			*(UnitHead + a) = (char*)malloc(sizeof(char) * 32);
+			if (!(*(UnitHead + a)))
 				WRONGEXIT("内存不足")
-				fscanf(f, "%s%c%d", *(ListHead + a), &temp, ListLHeadlimits + a);
+				fscanf(f, "%s%c%d", *(UnitHead + a), &temp, UnitHeadlimits + a);
 		}
 	//开始初始化表并读取数据
 	StudentList = (char***)malloc(sizeof(char**)*n);
@@ -70,7 +70,7 @@ void ReadIni(char *File)
 		if (!StudentList[a])
 			WRONGEXIT("内存不足");
 		for (b = 0; b < unit; b++) {
-			StudentList[a][b] = (char*)malloc(sizeof(char)*(ListLHeadlimits[b] + 1));
+			StudentList[a][b] = (char*)malloc(sizeof(char)*(UnitHeadlimits[b] + 1));
 			if (!StudentList[a][b])
 				WRONGEXIT("内存不足");
 			fscanf(f, "%s", StudentList[a][b]);
@@ -92,13 +92,13 @@ void WriteIni(char* File, int *list, int n)
 	f = fopen(File, "w+");
 	if (!f)
 		WRONGEXIT("打开文件失败")
-		fprintf(f, "%d %d\n", n, HeadCount);
-	for (a = 0; a < HeadCount; a++) {
-		fprintf(f, "%s %d ", ListHead[a], ListLHeadlimits[a]);
+		fprintf(f, "%d %d\n", n, UnitCount);
+	for (a = 0; a < UnitCount; a++) {
+		fprintf(f, "%s %d ", UnitHead[a], UnitHeadlimits[a]);
 	}
 	fprintf(f, "\n");
 	for (a = 0; a < n; a++) {
-		for (b = 0; b < HeadCount; b++)
+		for (b = 0; b < UnitCount; b++)
 			fprintf(f, "%s ", StudentList[list[a]][b]);
 		fprintf(f, "\n");
 	}
@@ -118,7 +118,7 @@ void NewUnit(char *title, int UnitLimits, char Default)
 	int *temp2;
 	int a, b;
 	int newUnitCount;
-	newUnitCount = HeadCount + 1;
+	newUnitCount = UnitCount + 1;
 
 	if (UnitLimits < 1)		//确保UnitLimits能够存储下"0"
 		UnitLimits = 1;
@@ -127,30 +127,30 @@ void NewUnit(char *title, int UnitLimits, char Default)
 	temp = (char**)malloc(sizeof(char*)*newUnitCount);
 	if (!temp)
 		WRONGEXIT("内存不足");
-	for (a = 0; a < HeadCount; a++)
-		temp[a] = ListHead[a];
+	for (a = 0; a < UnitCount; a++)
+		temp[a] = UnitHead[a];
 	temp[a] = (char*)malloc(sizeof(char) * 32);
 	if (!temp[a])
 		WRONGEXIT("内存不足");
 	strcpy(temp[a], title);
-	free(ListHead);
-	ListHead = temp;
+	free(UnitHead);
+	UnitHead = temp;
 
 	temp2 = (int*)malloc(sizeof(int)*newUnitCount);
 	if (!temp2)
 		WRONGEXIT("内存不足");
-	for (a = 0; a < HeadCount; a++)
-		temp2[a] = ListLHeadlimits[a];
+	for (a = 0; a < UnitCount; a++)
+		temp2[a] = UnitHeadlimits[a];
 	temp2[a] = UnitLimits;
-	free(ListLHeadlimits);
-	ListLHeadlimits = temp2;
+	free(UnitHeadlimits);
+	UnitHeadlimits = temp2;
 
 	//为每个学生的相应属性分配内存
 	for (a = 0; a < StudentCount; a++) {
 		temp = (char**)malloc(sizeof(char*)*newUnitCount);
 		if (!temp)
 			WRONGEXIT("内存不足");
-		for (b = 0; b < HeadCount; b++)
+		for (b = 0; b < UnitCount; b++)
 			temp[b] = StudentList[a][b];
 		temp[b] = (char*)malloc(sizeof(char)*(UnitLimits + 1));
 		if (!temp[b])
@@ -160,7 +160,7 @@ void NewUnit(char *title, int UnitLimits, char Default)
 		free(StudentList[a]);
 		StudentList[a] = temp;
 	}
-	HeadCount++;
+	UnitCount++;
 	return;
 }
 
@@ -185,15 +185,15 @@ int NewStudent(int *list, int *n)
 		StudentList = temp;
 	}
 	//对最后一个元素进行写入,到这里可以确定StudentList[StudentCount]一定可以保存数据
-	if (HeadCount > 0) {
-		StudentList[StudentCount] = (char**)malloc(sizeof(char*)*HeadCount);
+	if (UnitCount > 0) {
+		StudentList[StudentCount] = (char**)malloc(sizeof(char*)*UnitCount);
 		if (!StudentList[StudentCount])
 			WRONGEXIT("内存不足");
-		for (a = 0; a < HeadCount; a++) {
-			if (ListLHeadlimits[a] < 1) {
-				ListLHeadlimits[a] = 1;
+		for (a = 0; a < UnitCount; a++) {
+			if (UnitHeadlimits[a] < 1) {
+				UnitHeadlimits[a] = 1;
 			}
-			StudentList[StudentCount][a] = (char*)malloc(sizeof(char)*(ListLHeadlimits[a] + 1));
+			StudentList[StudentCount][a] = (char*)malloc(sizeof(char)*(UnitHeadlimits[a] + 1));
 			if (!StudentList[StudentCount][a])
 				WRONGEXIT("内存不足")
 				StudentList[StudentCount][a][0] = '0';		//初始化单元格数据
@@ -214,18 +214,18 @@ Unit要删除的列的下标
 void DeleteUnit(int Unit)
 {
 	int a,b,c;
-	for (a = 0,b=0; a < HeadCount; a++)
+	for (a = 0,b=0; a < UnitCount; a++)
 	{
-		ListHead[b] = ListHead[a];
-		ListLHeadlimits[b] = ListLHeadlimits[a];
+		UnitHead[b] = UnitHead[a];
+		UnitHeadlimits[b] = UnitHeadlimits[a];
 		if (a != Unit)
 			b++;
 		else
-			free(ListHead[a]);
+			free(UnitHead[a]);
 	}
 	for (a = 0; a < StudentCount; a++)
 	{
-		for (b = 0,c=0; b < HeadCount; b++)
+		for (b = 0,c=0; b < UnitCount; b++)
 		{
 			StudentList[a][c] = StudentList[a][b];
 			if (b != Unit)
@@ -234,7 +234,7 @@ void DeleteUnit(int Unit)
 				free(StudentList[a][b]);
 		}
 	}
-	HeadCount--;
+	UnitCount--;
 }
 
 /*
@@ -282,7 +282,7 @@ void DestroyStudentList()
 	int a, b, c;
 	for (a = 0; a < StudentCount; a++)
 	{
-		for (b = 0; b < HeadCount; b++)
+		for (b = 0; b < UnitCount; b++)
 		{
 			free(StudentList[a][b]);
 		}
@@ -334,11 +334,11 @@ int StrCmp(const char *A, const char *B)
 /*
 通过表头的标题找到表头对应的编号
 */
-int SearchHeadIndex(const char *ListHeadName)
+int SearchHeadIndex(const char *UnitHeadName)
 {
 	int a;
-	for (a = 0; a < HeadCount; a++) {
-		if (!strcmp(ListHead[a], ListHeadName))
+	for (a = 0; a < UnitCount; a++) {
+		if (!strcmp(UnitHead[a], UnitHeadName))
 			return a;
 	}
 	return -1;
@@ -423,13 +423,13 @@ void GetList(int *list, int *n)
 void display(int *list, int n)
 {
 	int a, b;
-	for (a = 0; a < HeadCount; a++) {
-		printf("%-*s ", ListLHeadlimits[a], ListHead[a]);
+	for (a = 0; a < UnitCount; a++) {
+		printf("%-*s ", UnitHeadlimits[a], UnitHead[a]);
 	}
 	printf("\n");
 	for (a = 0; a < n; a++) {
-		for (b = 0; b < HeadCount; b++) {
-			printf("%-*s ", ListLHeadlimits[b], StudentList[list[a]][b]);
+		for (b = 0; b < UnitCount; b++) {
+			printf("%-*s ", UnitHeadlimits[b], StudentList[list[a]][b]);
 		}
 		printf("\n");
 	}
@@ -446,4 +446,12 @@ GetUnit 表头的
 char* GetString(int *list,int list_ID,int GetUnit)
 {
 	return StudentList[list[list_ID]][GetUnit];
+}
+
+/*
+返回第Unit个单元的名称
+*/
+char* GetUnitTittle(int Unit)
+{
+	return UnitHead[Unit];
 }
